@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>RDG.Zapret</AssemblyName>
+    <RootNamespace>RDG.Zapret</RootNamespace>
+    <ApplicationManifest Condition="'$(NoElevation)' != 'true'">app.manifest</ApplicationManifest>
+    <ApplicationIcon Condition="Exists('Assets\app.ico')">Assets\app.ico</ApplicationIcon>
+    <Version>1.10.1</Version>
+    <Product>RDG.Zapret</Product>
+    <Description>Современный менеджер обхода DPI на базе zapret</Description>
+    <Company>RDG.Zapret</Company>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\app.ico" />
+    <Resource Include="Assets\app.ico" />
+    <None Remove="Assets\logo.png" />
+    <Resource Include="Assets\logo.png" />
+    <EmbeddedResource Include="Resources\kinlay0\*.bat" />
+    <EmbeddedResource Include="Resources\kinlay0\*.lua" />
+    <EmbeddedResource Include="Resources\kinlay0\*.bin" />
+    <EmbeddedResource Include="Resources\kinlay0\LICENSE" />
+  </ItemGroup>
+
+</Project>

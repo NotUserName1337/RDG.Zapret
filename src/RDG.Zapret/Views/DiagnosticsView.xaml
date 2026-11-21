@@ -1,0 +1,283 @@
+<UserControl x:Class="RDG.Zapret.Views.DiagnosticsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RDG.Zapret.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="780">
+
+    <UserControl.Resources>
+        <Style x:Key="TinyAction" TargetType="Button" BasedOn="{StaticResource GhostButton}">
+            <Setter Property="Height" Value="28" />
+            <Setter Property="Padding" Value="9,0" />
+            <Setter Property="FontSize" Value="11" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,4,0">
+
+            <!-- ===== HERO ===== -->
+            <Border Style="{StaticResource HeroCard}" Margin="0,0,0,16" Padding="22">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Style="{StaticResource AccentPill}" Padding="8,3">
+                                <TextBlock Text="ДОКТОР" FontSize="9.5" FontWeight="Bold"
+                                           Foreground="{DynamicResource AccentBrush}" />
+                            </Border>
+                            <TextBlock Text="Безопасная проверка и ремонт" Style="{StaticResource MutedText}"
+                                       FontSize="11" Margin="9,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <TextBlock Text="Проверка сети" FontFamily="{StaticResource DisplayFont}"
+                                   FontSize="23" FontWeight="SemiBold" Margin="0,12,0,0" />
+                        <TextBlock Text="{Binding DoctorSummary}" Style="{StaticResource BodyText}"
+                                   Margin="0,5,0,0" TextWrapping="Wrap" MaxWidth="720" HorizontalAlignment="Left" />
+                        <TextBlock Text="{Binding AdminHint}" Style="{StaticResource MutedText}"
+                                   FontSize="10.5" Margin="0,6,0,0" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="20,0,0,0">
+                        <Button Style="{StaticResource PrimaryButton}" Height="40"
+                                Command="{Binding RefreshCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE72C;" FontFamily="{StaticResource IconFont}" FontSize="12"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="Проверить снова" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource SecondaryButton}" Height="36" Margin="0,7,0,0"
+                                Content="Починить всё" Command="{Binding RepairAllCommand}"
+                                ToolTip="Остановить конфликты, сбросить DNS/ARP, проверить драйвер" />
+                        <TextBlock Text="Ничего не меняется без вашего нажатия"
+                                   Style="{StaticResource MutedText}" FontSize="9.5"
+                                   TextAlignment="Center" Margin="0,8,0,0" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ===== DOCTOR SECTIONS ===== -->
+            <ItemsControl ItemsSource="{Binding Sections}" Margin="0,0,0,4">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:DoctorSectionViewModel}">
+                        <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="38" Height="38" CornerRadius="11"
+                                            Background="{DynamicResource AccentSoftBrush}">
+                                        <TextBlock Text="{Binding Glyph}" FontFamily="{StaticResource IconFont}"
+                                                   FontSize="16" Foreground="{DynamicResource AccentBrush}"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="12,0,10,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Title}" Style="{StaticResource SectionHeading}" />
+                                        <TextBlock Text="{Binding Subtitle}" Style="{StaticResource MutedText}"
+                                                   FontSize="10.5" Margin="0,2,0,0" />
+                                    </StackPanel>
+                                    <Border Grid.Column="2" Style="{StaticResource Pill}" Padding="9,3" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding StatusText}" FontSize="9.5" FontWeight="SemiBold"
+                                                   Foreground="{Binding Status, Converter={StaticResource DoctorStatusBrush}}" />
+                                    </Border>
+                                </Grid>
+
+                                <ItemsControl ItemsSource="{Binding Steps}" Margin="0,14,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type vm:DoctorStepViewModel}">
+                                            <Border Style="{StaticResource CardSunken}" Padding="12" Margin="0,0,0,7">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="22" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Text="{Binding Status, Converter={StaticResource DoctorStatusGlyph}}"
+                                                               FontFamily="{StaticResource IconFont}" FontSize="12"
+                                                               Foreground="{Binding Status, Converter={StaticResource DoctorStatusBrush}}"
+                                                               VerticalAlignment="Top" Margin="0,2,0,0" />
+
+                                                    <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                                                        <TextBlock Text="{Binding Title}" FontSize="12.5" FontWeight="SemiBold" />
+                                                        <TextBlock Text="{Binding Message}" Style="{StaticResource MutedText}"
+                                                                   FontSize="11" Margin="0,3,0,0" TextWrapping="Wrap" />
+                                                        <Expander Header="Подробнее" Margin="0,7,0,0"
+                                                                  Visibility="{Binding HasDetails, Converter={StaticResource BoolToVis}}"
+                                                                  Foreground="{DynamicResource TextMuted}">
+                                                            <TextBlock Text="{Binding Details}" Style="{StaticResource MutedText}"
+                                                                       FontSize="10.5" Margin="0,4,0,0" TextWrapping="Wrap" MaxWidth="720"
+                                                                       HorizontalAlignment="Left" />
+                                                        </Expander>
+                                                    </StackPanel>
+
+                                                    <Button Grid.Column="2" Style="{StaticResource TinyAction}"
+                                                            Content="{Binding ActionLabel}" VerticalAlignment="Center"
+                                                            Command="{Binding DataContext.RepairCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding ActionKey}"
+                                                            Visibility="{Binding HasAction, Converter={StaticResource BoolToVis}}" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- ===== DNS ===== -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Text="DNS-сервер" Style="{StaticResource SectionHeading}" />
+                            <TextBlock Text="{Binding DnsStatusText}" Style="{StaticResource MutedText}"
+                                       FontSize="10.5" Margin="0,4,0,0" TextWrapping="Wrap" MaxWidth="760"
+                                       HorizontalAlignment="Left" />
+                            <TextBlock Text="{Binding DnsBackupText}" Style="{StaticResource MutedText}"
+                                       FontSize="9.5" Margin="0,3,0,0" />
+                        </StackPanel>
+                        <Button Style="{StaticResource GhostButton}" Height="30" HorizontalAlignment="Right"
+                                VerticalAlignment="Top" Content="Сбросить DNS-кэш"
+                                Command="{Binding FlushDnsCommand}" />
+                    </Grid>
+
+                    <ListBox Style="{StaticResource ChipsList}" ItemsSource="{Binding DnsProviders}"
+                             SelectedItem="{Binding SelectedDnsProvider, Mode=TwoWay}"
+                             DisplayMemberPath="Name" Margin="0,12,0,0" />
+
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Style="{StaticResource PrimaryButton}" Height="34" Content="Применить DNS"
+                                Command="{Binding ApplyDnsCommand}" />
+                        <Button Style="{StaticResource GhostButton}" Height="34" Margin="6,0,0,0"
+                                Content="Вернуть как было" Command="{Binding RestoreDnsCommand}"
+                                Visibility="{Binding HasDnsBackup, Converter={StaticResource BoolToVis}}" />
+                    </StackPanel>
+                    <TextBlock Text="Резервная копия настроек DNS сохраняется автоматически перед первым изменением."
+                               Style="{StaticResource MutedText}" FontSize="9.5" Margin="0,8,0,0" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <!-- ===== WHY DOES IT NOT OPEN ===== -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Почему сайт не открывается?" Style="{StaticResource SectionHeading}" />
+                    <TextBlock Text="Введите домен — программа проверит DNS, соединение, TLS и ответ сервера и объяснит причину простыми словами."
+                               Style="{StaticResource MutedText}" Margin="0,4,0,0" TextWrapping="Wrap" />
+
+                    <Grid Margin="0,14,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Height="40">
+                            <Border.Style>
+                                <Style TargetType="Border" BasedOn="{StaticResource InputShell}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsKeyboardFocused, ElementName=HostBox}" Value="True">
+                                            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBox x:Name="HostBox" Style="{StaticResource InputBare}" FontSize="12"
+                                     Text="{Binding BlockHost, UpdateSourceTrigger=PropertyChanged}" />
+                        </Border>
+                        <Button Grid.Column="1" Style="{StaticResource PrimaryButton}" Height="40" Margin="8,0,0,0"
+                                Content="Проверить сайт" Command="{Binding DiagnoseCommand}" />
+                    </Grid>
+
+                    <Border Margin="0,14,0,0" CornerRadius="12" Padding="14" BorderThickness="1"
+                            Background="{DynamicResource SurfaceSunken}"
+                            Visibility="{Binding HasBlockResult, Converter={StaticResource BoolToVis}}">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE946;" FontFamily="{StaticResource IconFont}" FontSize="12"
+                                           Foreground="{Binding BlockReason, Converter={StaticResource BlockReasonBrush}}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding BlockTitle}" FontSize="14" FontWeight="SemiBold"
+                                           Margin="8,0,0,0" VerticalAlignment="Center" />
+                                <Border Style="{StaticResource Pill}" Padding="7,2" Margin="9,0,0,0"
+                                        Visibility="{Binding BlockAddress, Converter={StaticResource StringEmptyToVis}}">
+                                    <TextBlock Text="{Binding BlockAddress}" FontFamily="{StaticResource MonoFont}"
+                                               FontSize="9.5" Foreground="{DynamicResource TextMuted}" />
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="{Binding BlockExplanation}" Style="{StaticResource BodyText}"
+                                       FontSize="12" Margin="0,7,0,0" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding BlockRecommendation}" Style="{StaticResource MutedText}"
+                                       FontSize="11" Margin="0,6,0,0" TextWrapping="Wrap" />
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <Button Style="{StaticResource PrimaryButton}" Height="32"
+                                        Content="Добавить домен в обход"
+                                        Command="{Binding AddBlockedDomainCommand}" />
+                                <Button Style="{StaticResource GhostButton}" Height="32" Margin="6,0,0,0"
+                                        Content="Добавить IP в обход"
+                                        Command="{Binding AddBlockedIpCommand}"
+                                        Visibility="{Binding BlockAddress, Converter={StaticResource StringEmptyToVis}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- ===== SYSTEM CHECKS ===== -->
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Text="Системные проверки" Style="{StaticResource SectionHeading}" />
+                            <TextBlock Text="{Binding SystemSummary}" Style="{StaticResource MutedText}"
+                                       FontSize="10.5" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                            <Button Style="{StaticResource TinyAction}" Content="Сбросить DNS"
+                                    Command="{Binding FlushDnsCommand}" Margin="0,0,4,0" />
+                            <Button Style="{StaticResource GhostButton}" Height="28" Padding="8,0" FontSize="10.5"
+                                    Content="Настройки сети" Command="{Binding OpenNetworkSettingsCommand}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding SystemChecks}" Margin="0,14,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="2" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,16,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Status, Converter={StaticResource DiagnosticGlyph}}"
+                                               FontFamily="{StaticResource IconFont}" FontSize="11"
+                                               Foreground="{Binding Status, Converter={StaticResource DiagnosticBrush}}"
+                                               VerticalAlignment="Top" Margin="0,1,0,0" />
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{Binding Title}" FontSize="11.5" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Detail}" Style="{StaticResource MutedText}"
+                                                   FontSize="10" Margin="0,2,0,0" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

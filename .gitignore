@@ -1,0 +1,46 @@
+# Visual Studio / .NET
+.vs/
+.vscode/
+bin/
+obj/
+artifacts/
+publish/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.pdb
+*.log
+
+# Local endpoint configuration (never commit real domains)
+update-endpoints.json
+
+# Update server runtime state
+web/config.php
+web/releases/
+web/*.exe
+web/*.zip
+web/version.json
+web/releases.json
+web/banner.json
+web/banner.jpg
+web/banner.png
+web/banner.webp
+web/zapret2.json
+web/tgwsproxy.json
+
+# Local documentation drafting
+sections/
+_dump*
+_ocr*
+_tables.txt
+*.docx
+build_docx.py
+config.ini
+imgui.ini
+loader.cfg
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store

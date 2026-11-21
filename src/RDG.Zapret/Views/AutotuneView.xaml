@@ -1,0 +1,413 @@
+<UserControl x:Class="RDG.Zapret.Views.AutotuneView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RDG.Zapret.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="780">
+
+    <UserControl.Resources>
+        <Style x:Key="ModeRadio" TargetType="RadioButton">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0,0,7,0" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Root" Background="{DynamicResource SurfaceSunken}"
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                CornerRadius="11" Padding="12,10">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource BorderStrong}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="MiniIcon" TargetType="TextBlock" BasedOn="{StaticResource IconGlyph}">
+            <Setter Property="FontSize" Value="11" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,4,0">
+
+            <!-- ===== CONFIG ===== -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.3*" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="Параметры подбора" Style="{StaticResource SectionHeading}" />
+                        <TextBlock Text="RDG.Zapret проверит каждую стратегию по всем выбранным сервисам. В результатах останутся только стабильные — где доступны все сервисы."
+                                   Style="{StaticResource MutedText}" Margin="0,4,0,0" TextWrapping="Wrap" />
+
+                        <TextBlock Text="РЕЖИМ" Style="{StaticResource SectionLabel}" Margin="0,18,0,8" />
+                        <UniformGrid Columns="3">
+                            <RadioButton Style="{StaticResource ModeRadio}" GroupName="TuneMode"
+                                         IsChecked="{Binding IsQuick, Mode=TwoWay}">
+                                <StackPanel>
+                                    <TextBlock Text="Быстрый" FontSize="12.5" FontWeight="SemiBold" />
+                                    <TextBlock Text="Все сервисы · быстрый таймаут" Style="{StaticResource MutedText}"
+                                               FontSize="10" Margin="0,3,0,0" />
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton Style="{StaticResource ModeRadio}" GroupName="TuneMode"
+                                         IsChecked="{Binding IsStandard, Mode=TwoWay}">
+                                <StackPanel>
+                                    <TextBlock Text="Стандартный" FontSize="12.5" FontWeight="SemiBold" />
+                                    <TextBlock Text="Все сервисы · обычная проверка" Style="{StaticResource MutedText}"
+                                               FontSize="10" Margin="0,3,0,0" />
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton Style="{StaticResource ModeRadio}" GroupName="TuneMode" Margin="0"
+                                         IsChecked="{Binding IsDeep, Mode=TwoWay}">
+                                <StackPanel>
+                                    <TextBlock Text="Глубокий" FontSize="12.5" FontWeight="SemiBold" />
+                                    <TextBlock Text="Все сервисы · 2 проверки" Style="{StaticResource MutedText}"
+                                               FontSize="10" Margin="0,3,0,0" />
+                                </StackPanel>
+                            </RadioButton>
+                        </UniformGrid>
+
+                        <Grid Margin="0,18,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="ПРОГРЕВ СТРАТЕГИИ" Style="{StaticResource SectionLabel}" />
+                                <TextBlock Text="Пауза перед проверкой, чтобы соединения успели восстановиться"
+                                           Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,3,0,0" />
+                            </StackPanel>
+                            <Border Grid.Column="1" Style="{StaticResource CardSunken}" Padding="5,4" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Style="{StaticResource IconButton}" Width="24" Height="24" Content="&#xE738;"
+                                            FontSize="10" Command="{Binding WarmupMinusCommand}" ToolTip="Меньше" />
+                                    <TextBlock Text="{Binding WarmupText}" FontSize="12" FontWeight="SemiBold"
+                                               MinWidth="34" TextAlignment="Center" VerticalAlignment="Center" />
+                                    <Button Style="{StaticResource IconButton}" Width="24" Height="24" Content="&#xE710;"
+                                            FontSize="10" Command="{Binding WarmupPlusCommand}" ToolTip="Больше" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <Border Style="{StaticResource Divider}" Margin="0,16,0,14" />
+
+                        <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding SkipBaselineOk, Mode=TwoWay}">
+                            <StackPanel>
+                                <TextBlock Text="Пропускать уже доступные сервисы" FontSize="12.5" />
+                                <TextBlock Text="Не тратить время на то, что работает без обхода"
+                                           Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+
+                        <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding KeepBestRunning, Mode=TwoWay}"
+                                  Margin="0,12,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Оставить лучшую стратегию включённой" FontSize="12.5" />
+                                <TextBlock Text="После подбора обход продолжит работать"
+                                           Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+
+                        <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding TuneBestOnly, Mode=TwoWay}"
+                                  Margin="0,12,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Только лучшие варианты" FontSize="12.5" />
+                                <TextBlock Text="10 лучших по прошлым результатам + новые стратегии"
+                                           Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource Card}">
+                    <StackPanel>
+                        <Grid>
+                            <StackPanel>
+                                <TextBlock Text="Что проверять" Style="{StaticResource SectionHeading}" />
+                                <TextBlock Text="{Binding InstallationHint}" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                <Button Style="{StaticResource GhostButton}" Height="26" Padding="7,0" FontSize="10.5"
+                                        Content="Все" Command="{Binding SelectAllServicesCommand}" />
+                                <Button Style="{StaticResource GhostButton}" Height="26" Padding="7,0" FontSize="10.5"
+                                        Content="Ничего" Command="{Binding SelectNoServicesCommand}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding Services}" Margin="0,14,0,0">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="2" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:ServiceToggleViewModel}">
+                                    <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                              Margin="0,0,0,11">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border Width="22" Height="22" CornerRadius="6"
+                                                    Background="{Binding ColorFrom, Converter={StaticResource HexToBrush}}"
+                                                    VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Badge}" Foreground="White" FontSize="8"
+                                                           FontWeight="Bold" HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+                                            </Border>
+                                            <TextBlock Text="{Binding Name}" Margin="7,0,0,0" FontSize="12"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Border Style="{StaticResource Divider}" Margin="0,4,0,12" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xE946;" FontFamily="{StaticResource IconFont}" FontSize="11"
+                                       Foreground="{DynamicResource TextMuted}" VerticalAlignment="Top" Margin="0,1,7,0" />
+                            <TextBlock Grid.Column="1"
+                                       Text="Сервисы, доступные без обхода, можно исключить из оценки — так подбор быстрее найдёт стратегию для заблокированных."
+                                       Style="{StaticResource MutedText}" FontSize="10.5" TextWrapping="Wrap" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- ===== PROGRESS ===== -->
+            <Border Style="{StaticResource HeroCard}" Margin="0,0,0,16" Padding="22">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Style="{StaticResource AccentPill}" Padding="8,3">
+                                <TextBlock Text="АВТОПОДБОР" FontSize="9.5" FontWeight="Bold"
+                                           Foreground="{DynamicResource AccentBrush}" />
+                            </Border>
+                            <TextBlock Text="{Binding ModeLabel}" Style="{StaticResource MutedText}"
+                                       FontSize="11" Margin="9,0,0,0" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding EstimateText}" Style="{StaticResource MutedText}"
+                                       FontSize="11" Margin="9,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding Headline}" FontFamily="{StaticResource DisplayFont}"
+                                   FontSize="21" FontWeight="SemiBold" Margin="0,12,0,0"
+                                   TextTrimming="CharacterEllipsis" />
+
+                        <TextBlock Text="{Binding StatusText}" Style="{StaticResource BodyText}" Margin="0,5,0,0" />
+                        <TextBlock Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,4,0,0"
+                                   TextWrapping="Wrap" MaxWidth="760" HorizontalAlignment="Left"
+                                   Text="Каждая стратегия проверяется по всем выбранным сервисам. В результатах остаются только стабильные — те, где доступны все сервисы." />
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0"
+                                    Visibility="{Binding HasExcluded, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{Binding ExcludedText}" Style="{StaticResource MutedText}"
+                                       FontSize="10.5" VerticalAlignment="Center"
+                                       ToolTip="{Binding ExcludedNames}" />
+                            <Button Style="{StaticResource GhostButton}" Height="26" Margin="8,0,0,0"
+                                    Content="Вернуть исключённые" Command="{Binding ResetExcludedCommand}"
+                                    ToolTip="{Binding ExcludedNames}" />
+                        </StackPanel>
+                        <ProgressBar Value="{Binding Progress, Mode=OneWay}" Margin="0,14,0,0" Height="8" />
+
+                        <Grid Margin="0,8,0,0">
+                            <TextBlock Text="{Binding ProgressCaption}" Style="{StaticResource MutedText}" FontSize="10.5" />
+                            <TextBlock Text="{Binding EtaText}" Style="{StaticResource MutedText}" FontSize="10.5"
+                                       HorizontalAlignment="Right" />
+                        </Grid>
+
+                        <Border Style="{StaticResource Divider}" Margin="0,14,0,12" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="БЕЗ ОБХОДА" Style="{StaticResource SectionLabel}" VerticalAlignment="Top"
+                                       Margin="0,2,12,0" />
+                            <TextBlock Grid.Column="1" Text="{Binding BaselineText}" Style="{StaticResource MutedText}"
+                                       FontSize="11" TextWrapping="Wrap" />
+                            <TextBlock Grid.Column="2" Text="{Binding BaselineRatio}" Style="{StaticResource MonoText}"
+                                       FontSize="11" Margin="10,0,0,0" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="26,0,0,0" MinWidth="150">
+                        <Button Style="{StaticResource PrimaryButton}" Command="{Binding StartCommand}"
+                                Visibility="{Binding IsTuning, Converter={StaticResource BoolToVis}, ConverterParameter=invert}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE945;" FontFamily="{StaticResource IconFont}" FontSize="13"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="Начать подбор" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource DangerButton}" Height="42" Command="{Binding CancelCommand}"
+                                Visibility="{Binding IsTuning, Converter={StaticResource BoolToVis}}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE71A;" FontFamily="{StaticResource IconFont}" FontSize="11"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="Отменить" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text="{Binding SavedBestText}" Style="{StaticResource MutedText}" FontSize="10"
+                                   TextWrapping="Wrap" TextAlignment="Center" Margin="0,10,0,0" MaxWidth="170" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ===== RESULTS ===== -->
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Text="Стабильные стратегии" Style="{StaticResource SectionHeading}" />
+                            <TextBlock Text="{Binding MinimumScoreText}" Style="{StaticResource MutedText}"
+                                       FontSize="10" Margin="0,4,0,0" />
+                            <TextBlock Text="{Binding SummaryText}" Style="{StaticResource MutedText}" Margin="0,4,0,0"
+                                       Visibility="{Binding SummaryText, Converter={StaticResource StringEmptyToVis}}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                            <Button Style="{StaticResource IconButton}" Content="&#xE8C8;" ToolTip="Скопировать отчёт"
+                                    Command="{Binding CopyReportCommand}" />
+                            <Button Style="{StaticResource IconButton}" Content="&#xE8B7;" ToolTip="Папка с отчётами"
+                                    Command="{Binding OpenReportFolderCommand}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- best banner -->
+                    <Border Margin="0,14,0,0" CornerRadius="14" Padding="16" BorderThickness="1"
+                            Background="{DynamicResource AccentGradientSoft}"
+                            BorderBrush="{DynamicResource AccentBrush}"
+                            Visibility="{Binding HasBest, Converter={StaticResource BoolToVis}}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border Width="42" Height="42" CornerRadius="12" Background="{DynamicResource AccentGradient}">
+                                <TextBlock Text="&#xE735;" FontFamily="{StaticResource IconFont}" FontSize="19"
+                                           Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="14,0,12,0" VerticalAlignment="Center">
+                                <TextBlock Text="ЛУЧШАЯ СТРАТЕГИЯ" Style="{StaticResource SectionLabel}"
+                                           Foreground="{DynamicResource AccentBrush}" />
+                                <TextBlock Text="{Binding BestName}" FontSize="15" FontWeight="SemiBold" Margin="0,3,0,0"
+                                           TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                <StackPanel Margin="0,0,14,0" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding BestScoreText}" FontSize="18" FontWeight="SemiBold"
+                                               HorizontalAlignment="Right" />
+                                    <TextBlock Text="из 100" Style="{StaticResource MutedText}" FontSize="9.5"
+                                               HorizontalAlignment="Right" />
+                                </StackPanel>
+                                <Button Style="{StaticResource PrimaryButton}" Height="38" Content="Применить"
+                                        Command="{Binding ApplyBestCommand}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <ItemsControl ItemsSource="{Binding Rows}" Margin="0,12,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:TuneRowViewModel}">
+                                <Border Style="{StaticResource CardSunken}" Padding="12" Margin="0,0,0,6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition Width="96" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Text="&#xE945;" FontFamily="{StaticResource IconFont}" FontSize="13"
+                                                   Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center" />
+
+                                        <StackPanel Grid.Column="1" Margin="4,0,12,0" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Name}" FontSize="12.5" FontWeight="SemiBold"
+                                                           TextTrimming="CharacterEllipsis" MaxWidth="300" />
+                                                <Border Background="#2634D399" BorderBrush="#5534D399" BorderThickness="1"
+                                                        CornerRadius="20" Padding="6,1" Margin="7,0,0,0"
+                                                        Visibility="{Binding IsBest, Converter={StaticResource BoolToVis}}">
+                                                    <TextBlock Text="ЛУЧШАЯ" FontSize="8" FontWeight="Bold"
+                                                               Foreground="{DynamicResource SuccessBrush}" />
+                                                </Border>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                                <ItemsControl ItemsSource="{Binding Dots}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Horizontal" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Ellipse Width="6" Height="6" Margin="0,0,4,0"
+                                                                     ToolTip="{Binding Tooltip}"
+                                                                     Fill="{Binding Status, Converter={StaticResource ProbeStatusBrush}}" />
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                                <TextBlock Text="{Binding Note}" Style="{StaticResource MutedText}"
+                                                           FontSize="10" Margin="5,0,0,0" />
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <TextBlock Text="{Binding ScoreText}" FontSize="14" FontWeight="SemiBold"
+                                                           Foreground="{Binding Score, Converter={StaticResource ScoreBrush}}" />
+                                                <TextBlock Text="/ 100" Style="{StaticResource MutedText}" FontSize="9"
+                                                           VerticalAlignment="Bottom" Margin="3,0,0,1" />
+                                            </StackPanel>
+                                            <ProgressBar Value="{Binding Score, Mode=OneWay}" Height="4" Margin="0,5,0,0" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding ServicesText}" Style="{StaticResource MonoText}"
+                                                       FontSize="10" HorizontalAlignment="Right" />
+                                            <TextBlock Text="{Binding DurationText}" Style="{StaticResource MutedText}"
+                                                       FontSize="9" HorizontalAlignment="Right" Margin="0,3,0,0" />
+                                            <Button Style="{StaticResource GhostButton}" Height="24" Margin="0,5,0,0"
+                                                    Content="Применить" Command="{Binding ApplyCommand}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <StackPanel Margin="0,14,0,4"
+                                Visibility="{Binding Rows.Count, Converter={StaticResource CountToVis}, ConverterParameter=invert}">
+                        <TextBlock Text="Пока нет стабильных стратегий" FontSize="12.5" FontWeight="SemiBold" />
+                        <TextBlock Text="Нажмите «Начать подбор» — здесь останутся только стратегии, где доступны все выбранные сервисы."
+                                   Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

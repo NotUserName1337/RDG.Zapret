@@ -1,0 +1,60 @@
+<Application x:Class="RDG.Zapret.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:infra="clr-namespace:RDG.Zapret.Infrastructure"
+             xmlns:vm="clr-namespace:RDG.Zapret.ViewModels"
+             xmlns:views="clr-namespace:RDG.Zapret.Views"
+             ShutdownMode="OnMainWindowClose">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <infra:BoolToVisibilityConverter x:Key="BoolToVis" />
+            <infra:InverseBoolConverter x:Key="InverseBool" />
+            <infra:NullToVisibilityConverter x:Key="NullToVis" />
+            <infra:StringEmptyToVisibilityConverter x:Key="StringEmptyToVis" />
+            <infra:CountToVisibilityConverter x:Key="CountToVis" />
+            <infra:HexToBrushConverter x:Key="HexToBrush" />
+            <infra:ProbeStatusToBrushConverter x:Key="ProbeStatusBrush" />
+            <infra:ProbeStatusToTextConverter x:Key="ProbeStatusText" />
+            <infra:ProbeStatusToGlyphConverter x:Key="ProbeStatusGlyph" />
+            <infra:ScoreToBrushConverter x:Key="ScoreBrush" />
+            <infra:LogLevelToBrushConverter x:Key="LogLevelBrush" />
+            <infra:DiagnosticStatusToBrushConverter x:Key="DiagnosticBrush" />
+            <infra:DiagnosticStatusToGlyphConverter x:Key="DiagnosticGlyph" />
+            <infra:DoctorStatusToBrushConverter x:Key="DoctorStatusBrush" />
+            <infra:DoctorStatusToGlyphConverter x:Key="DoctorStatusGlyph" />
+            <infra:BlockReasonToBrushConverter x:Key="BlockReasonBrush" />
+
+            <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+                <views:DashboardView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:StrategiesViewModel}">
+                <views:StrategiesView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:AutotuneViewModel}">
+                <views:AutotuneView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:GeneratorViewModel}">
+                <views:GeneratorView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:TelegramViewModel}">
+                <views:TelegramView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:DiagnosticsViewModel}">
+                <views:DiagnosticsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ListsViewModel}">
+                <views:ListsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:LogsViewModel}">
+                <views:LogsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+                <views:SettingsView />
+            </DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

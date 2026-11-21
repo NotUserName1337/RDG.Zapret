@@ -1,0 +1,513 @@
+<UserControl x:Class="RDG.Zapret.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="780">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,4,0">
+
+            <!-- ===== ZAPRET FOLDER ===== -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Папка zapret" Style="{StaticResource SectionHeading}" />
+                            <Border Style="{StaticResource Pill}" Margin="10,0,0,0" Padding="8,2">
+                                <TextBlock Text="{Binding InstallationTitle}" FontSize="10"
+                                           Foreground="{DynamicResource TextSecondary}" />
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="{Binding InstallationDetail}" Style="{StaticResource MutedText}"
+                                   Margin="0,5,0,0" TextTrimming="CharacterEllipsis" />
+
+                        <Grid Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border Height="40">
+                                <Border.Style>
+                                    <Style TargetType="Border" BasedOn="{StaticResource InputShell}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsKeyboardFocused, ElementName=PathBox}" Value="True">
+                                                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBox x:Name="PathBox" Style="{StaticResource InputBare}" Text="{Binding ZapretPath, UpdateSourceTrigger=PropertyChanged}"
+                                         FontSize="12" />
+                            </Border>
+                            <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Height="40" Margin="8,0,0,0"
+                                    Content="Обзор" Command="{Binding BrowseCommand}" />
+                            <Button Grid.Column="2" Style="{StaticResource PrimaryButton}" Height="40" Margin="8,0,0,0"
+                                    Content="Применить" Command="{Binding ApplyPathCommand}" />
+                        </Grid>
+
+                        <Grid Margin="0,9,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xE946;" FontFamily="{StaticResource IconFont}" FontSize="11"
+                                       VerticalAlignment="Top" Margin="0,1,7,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPathValid}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsPathChecking}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Grid.Column="1" Text="{Binding PathStatus}" FontSize="11.5" TextWrapping="Wrap">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPathValid}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsPathChecking}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                            <Button Style="{StaticResource GhostButton}" Height="32" Content="Найти автоматически"
+                                    Command="{Binding AutoDetectCommand}" />
+                            <Button Style="{StaticResource GhostButton}" Height="32" Margin="4,0,0,0"
+                                    Content="Открыть папку" Command="{Binding OpenInstallFolderCommand}" />
+                            <Button Style="{StaticResource GhostButton}" Height="32" Margin="4,0,0,0"
+                                    Content="Скачать / обновить" Command="{Binding DownloadCommand}" />
+                            <Button Style="{StaticResource GhostButton}" Height="32" Margin="4,0,0,0"
+                                    Content="GitHub" Command="{Binding OpenReleasesCommand}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="20,0,0,0">
+                        <Button Style="{StaticResource SecondaryButton}" Height="38" Content="GitHub Flowseal"
+                                Command="{Binding OpenFlowsealCommand}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ===== LAUNCH / CHECK / ACCENT ===== -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.15*" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="Запуск" Style="{StaticResource SectionHeading}" />
+                        <TextBlock Text="Поведение приложения и автозапуск обхода" Style="{StaticResource MutedText}"
+                                   Margin="0,4,0,0" />
+
+                        <TextBlock Text="ЯДРО ОБХОДА" Style="{StaticResource SectionLabel}" Margin="0,16,0,0" />
+                        <UniformGrid Columns="2" Margin="0,6,0,0">
+                            <RadioButton Style="{StaticResource EngineRadio}" GroupName="SettingsEngine"
+                                         Content="zapret" Margin="0,0,3,0"
+                                         IsChecked="{Binding DataContext.IsZapretSelected, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}"
+                                         ToolTip="{Binding DataContext.ZapretEngineTooltip, RelativeSource={RelativeSource AncestorType=Window}}" />
+                            <RadioButton Style="{StaticResource EngineRadio}" GroupName="SettingsEngine"
+                                         Content="zapret2" Margin="3,0,0,0"
+                                         IsChecked="{Binding DataContext.IsZapret2Selected, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}"
+                                         ToolTip="{Binding DataContext.Zapret2EngineTooltip, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        </UniformGrid>
+                        <TextBlock Text="{Binding EngineAvailabilityText}" Style="{StaticResource MutedText}"
+                                   FontSize="10" Margin="0,6,0,0" TextWrapping="Wrap" />
+
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <Button Style="{StaticResource GhostButton}" Height="28"
+                                    Content="Скачать / обновить zapret2"
+                                    Command="{Binding DataContext.InstallZapret2Command, RelativeSource={RelativeSource AncestorType=Window}}" />
+                            <TextBlock Text="{Binding DataContext.Zapret2InstallStatus, RelativeSource={RelativeSource AncestorType=Window}}"
+                                       Style="{StaticResource MutedText}" FontSize="10" Margin="10,0,0,0"
+                                       VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="280" />
+                        </StackPanel>
+                        <ProgressBar Height="3" Margin="0,6,0,0" Minimum="0" Maximum="100"
+                                     Value="{Binding DataContext.Zapret2InstallProgress, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}"
+                                     Foreground="{DynamicResource AccentBrush}"
+                                     Background="{DynamicResource SurfaceSunken}" BorderThickness="0"
+                                     Visibility="{Binding DataContext.IsZapret2Installing, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}" />
+                        <Border Style="{StaticResource Divider}" Margin="0,14,0,2" />
+
+                        <CheckBox Style="{StaticResource ToggleSwitch}" Margin="0,14,0,0"
+                                  IsChecked="{Binding AutoDownloadStrategies, Mode=TwoWay}">
+                            <StackPanel>
+                                <TextBlock Text="Автоматически скачивать zapret" FontSize="12.5" />
+                                <TextBlock Text="Загрузить последний релиз с GitHub, если папка не найдена"
+                                           Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+
+                        <CheckBox Style="{StaticResource ToggleSwitch}" Margin="0,14,0,0"
+                                  IsChecked="{Binding AutoCheckStrategyPack, Mode=TwoWay}">
+                            <StackPanel>
+                                <TextBlock Text="Проверять новые стратегии при запуске" FontSize="12.5" />
+                                <TextBlock Text="Скачивать обновлённый набор стратегий с сервера и добавлять новое"
+                                           Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+
+                        <CheckBox Style="{StaticResource ToggleSwitch}" Margin="0,14,0,0"
+                                  IsChecked="{Binding StartWithWindows, Mode=TwoWay}" IsEnabled="{Binding IsAutostartBusy, Converter={StaticResource InverseBool}}">
+                            <StackPanel>
+                                <TextBlock Text="Запускать при входе в Windows" FontSize="12.5" />
+                                <TextBlock Text="Задача в Планировщике с правами администратора — без запроса UAC"
+                                           Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+
+                        <CheckBox Style="{StaticResource ToggleSwitch}" Margin="0,14,0,0"
+                                  IsChecked="{Binding StartLastStrategyOnLaunch, Mode=TwoWay}">
+                            <StackPanel>
+                                <TextBlock Text="Включать обход при старте" FontSize="12.5" />
+                                <TextBlock Text="Использовать последнюю или лучшую стратегию"
+                                           Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+
+                        <CheckBox Style="{StaticResource ToggleSwitch}" Margin="0,14,0,0"
+                                  IsChecked="{Binding MinimizeOnAutostart, Mode=TwoWay}">
+                            <StackPanel>
+                                <TextBlock Text="Сворачивать при автозапуске" FontSize="12.5" />
+                                <TextBlock Text="Окно не будет мешать после входа в систему"
+                                           Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+
+                        <CheckBox Style="{StaticResource ToggleSwitch}" Margin="0,14,0,0"
+                                  IsChecked="{Binding LeaveBypassOnExit, Mode=TwoWay}">
+                            <StackPanel>
+                                <TextBlock Text="Оставлять обход при выходе" FontSize="12.5" />
+                                <TextBlock Text="Если выключено, winws.exe будет остановлен при закрытии RDG.Zapret"
+                                           Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+
+                        <CheckBox Style="{StaticResource ToggleSwitch}" Margin="0,14,0,0"
+                                  IsChecked="{Binding CloseToTray, Mode=TwoWay}">
+                            <StackPanel>
+                                <TextBlock Text="Сворачивать в трей при закрытии" FontSize="12.5" />
+                                <TextBlock Text="Крестик скрывает окно; выход — через меню иконки в трее"
+                                           Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+
+                        <TextBlock Text="Настраиваю задачу автозапуска…" Style="{StaticResource MutedText}"
+                                   FontSize="10.5" Margin="0,12,0,0" Foreground="{DynamicResource AccentBrush}"
+                                   Visibility="{Binding IsAutostartBusy, Converter={StaticResource BoolToVis}}" />
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Grid.Column="2">
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                        <StackPanel>
+                            <TextBlock Text="Проверка сервисов" Style="{StaticResource SectionHeading}" />
+
+                            <Grid Margin="0,16,0,0">
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Тайм-аут запроса" FontSize="12.5" />
+                                    <TextBlock Text="Сколько ждать ответа от сервиса" Style="{StaticResource MutedText}"
+                                               FontSize="10.5" Margin="0,2,0,0" />
+                                </StackPanel>
+                                <Border Style="{StaticResource CardSunken}" Padding="5,4" HorizontalAlignment="Right"
+                                        VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Style="{StaticResource IconButton}" Width="24" Height="24" Content="&#xE738;"
+                                                FontSize="10" Command="{Binding TimeoutMinusCommand}" ToolTip="Меньше" />
+                                        <TextBlock Text="{Binding TimeoutText}" FontSize="12" FontWeight="SemiBold"
+                                                   MinWidth="34" TextAlignment="Center" VerticalAlignment="Center" />
+                                        <Button Style="{StaticResource IconButton}" Width="24" Height="24" Content="&#xE710;"
+                                                FontSize="10" Command="{Binding TimeoutPlusCommand}" ToolTip="Больше" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <Border Style="{StaticResource Divider}" Margin="0,14,0,14" />
+
+                            <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding DeepClassification, Mode=TwoWay}">
+                                <StackPanel>
+                                    <TextBlock Text="Глубокая диагностика" FontSize="12.5" />
+                                    <TextBlock Text="Дополнительно проверять TLS-рукопожатие при ошибке"
+                                               Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                                </StackPanel>
+                            </CheckBox>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                        <StackPanel>
+                            <TextBlock Text="Свои сайты" Style="{StaticResource SectionHeading}" />
+                            <TextBlock Text="Добавьте свой сервис в проверку и автоподбор."
+                                       Style="{StaticResource MutedText}" Margin="0,4,0,0" FontSize="10.5" TextWrapping="Wrap" />
+
+                            <Grid Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border Height="34" Margin="0,0,5,0" Style="{StaticResource InputShell}">
+                                    <TextBox Style="{StaticResource InputBare}" FontSize="10.5"
+                                             Text="{Binding NewServiceName, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Название (необязательно)" />
+                                </Border>
+                                <Border Grid.Column="1" Height="34" Margin="0,0,5,0" Style="{StaticResource InputShell}">
+                                    <TextBox Style="{StaticResource InputBare}" FontSize="10.5"
+                                             Text="{Binding NewServiceUrl, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Например: https://example.com/" />
+                                </Border>
+                                <Button Grid.Column="2" Style="{StaticResource PrimaryButton}" Height="34"
+                                        Content="Добавить" Command="{Binding AddCustomServiceCommand}" />
+                            </Grid>
+
+                            <ItemsControl ItemsSource="{Binding CustomServices}" Margin="0,10,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource CardSunken}" Padding="8,5" Margin="0,0,0,5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}" FontSize="11" FontWeight="SemiBold"
+                                                               TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Url}" Style="{StaticResource MutedText}"
+                                                               FontSize="9" TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                                <Button Grid.Column="1" Style="{StaticResource IconButton}"
+                                                        Width="24" Height="24" Content="&#xE711;" FontSize="9"
+                                                        ToolTip="Удалить"
+                                                        Command="{Binding DataContext.RemoveCustomServiceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding Id}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock Text="Своих сервисов пока нет" Style="{StaticResource MutedText}" FontSize="10"
+                                       Margin="0,4,0,0"
+                                       Visibility="{Binding CustomServices.Count, Converter={StaticResource CountToVis}, ConverterParameter=invert}" />
+                            <TextBlock Text="После добавления сервис появится на «Обзоре» и в автоподборе."
+                                       Style="{StaticResource MutedText}" FontSize="9.5" Margin="0,7,0,0" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                        <StackPanel>
+                            <TextBlock Text="Фоновая проверка" Style="{StaticResource SectionHeading}" />
+                            <TextBlock Text="Проверка сервисов по таймеру и автоматическое восстановление стратегии"
+                                       Style="{StaticResource MutedText}" Margin="0,4,0,0" TextWrapping="Wrap" />
+
+                            <CheckBox Style="{StaticResource ToggleSwitch}" Margin="0,16,0,0"
+                                      IsChecked="{Binding BackgroundMonitorEnabled, Mode=TwoWay}">
+                                <StackPanel>
+                                    <TextBlock Text="Проверять сервисы в фоне" FontSize="12.5" />
+                                    <TextBlock Text="Работает, когда окно свёрнуто в трей"
+                                               Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                                </StackPanel>
+                            </CheckBox>
+
+                            <Grid Margin="0,14,0,0">
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Интервал проверки" FontSize="12.5" />
+                                    <TextBlock Text="{Binding MonitorIntervalText}" Style="{StaticResource MutedText}"
+                                               FontSize="10.5" Margin="0,2,0,0" />
+                                </StackPanel>
+                                <Border Style="{StaticResource CardSunken}" Padding="5,4" HorizontalAlignment="Right"
+                                        VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Style="{StaticResource IconButton}" Width="24" Height="24" Content="&#xE738;"
+                                                FontSize="10" Command="{Binding MonitorMinusCommand}" ToolTip="Чаще (меньше интервал)" />
+                                        <TextBlock Text="{Binding MonitorIntervalShort}" FontSize="11.5" FontWeight="SemiBold"
+                                                   MinWidth="44" TextAlignment="Center" VerticalAlignment="Center" />
+                                        <Button Style="{StaticResource IconButton}" Width="24" Height="24" Content="&#xE710;"
+                                                FontSize="10" Command="{Binding MonitorPlusCommand}" ToolTip="Реже (больше интервал)" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <Border Style="{StaticResource Divider}" Margin="0,14,0,14" />
+
+                            <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding BackgroundRecoveryEnabled, Mode=TwoWay}">
+                                <StackPanel>
+                                    <TextBlock Text="Автоподбор при сбое" FontSize="12.5" />
+                                    <TextBlock Text="Если сервис перестал отвечать — подобрать стратегию и уведомить"
+                                               Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                                </StackPanel>
+                            </CheckBox>
+
+                            <TextBlock Text="{Binding BackgroundRetryText}" Style="{StaticResource MutedText}"
+                                       FontSize="10" Margin="0,10,0,0" TextWrapping="Wrap" />
+
+                            <TextBlock Text="Уведомления показываются иконкой в трее. Автовосстановление работает при запущенном обходе."
+                                       Style="{StaticResource MutedText}" FontSize="10" Margin="0,8,0,0" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="Оформление" Style="{StaticResource SectionHeading}" />
+                            <TextBlock Text="Акцентный цвет интерфейса" Style="{StaticResource MutedText}"
+                                       Margin="0,4,0,10" />
+                            <ListBox Style="{StaticResource ChipsList}" ItemsSource="{Binding Accents}"
+                                     SelectedItem="{Binding SelectedAccent, Mode=TwoWay}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border Width="24" Height="24" CornerRadius="12"
+                                                    Background="{Binding ColorFrom, Converter={StaticResource HexToBrush}}">
+                                                <Border Width="8" Height="8" CornerRadius="4" Background="White"
+                                                        Opacity="0.75" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                            <TextBlock Text="{Binding Name}" FontSize="11.5" Margin="7,0,0,0"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <!-- ===== DIAGNOSTICS LINK ===== -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Width="40" Height="40" CornerRadius="12" Background="{DynamicResource AccentSoftBrush}">
+                        <TextBlock Text="&#xE9D9;" FontFamily="{StaticResource IconFont}" FontSize="17"
+                                   Foreground="{DynamicResource AccentBrush}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" Margin="13,0,14,0" VerticalAlignment="Center">
+                        <TextBlock Text="Диагностика и ремонт" Style="{StaticResource SectionHeading}" />
+                        <TextBlock Text="Конфликты, DNS, ARP, драйвер WinDivert и разбор причин блокировки — в одном месте."
+                                   Style="{StaticResource MutedText}" Margin="0,4,0,0" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <Button Grid.Column="2" Style="{StaticResource SecondaryButton}" Height="36"
+                            Content="Открыть" Command="{Binding OpenDiagnosticsCommand}" VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+
+            <!-- ===== UPDATES ===== -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Обновления" Style="{StaticResource SectionHeading}" />
+                                <Border Style="{StaticResource Pill}" Margin="8,0,0,0" Padding="8,2">
+                                    <TextBlock Text="{Binding AppVersionText}" FontSize="10"
+                                               Foreground="{DynamicResource TextSecondary}" />
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="{Binding UpdateStatus}" Style="{StaticResource MutedText}"
+                                       FontSize="10.5" Margin="0,5,0,0" TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                            <Button Style="{StaticResource GhostButton}" Height="30" Content="Проверить"
+                                    Command="{Binding CheckUpdatesCommand}" IsEnabled="{Binding IsUpdateIdle}" />
+                            <Button Style="{StaticResource PrimaryButton}" Height="30" Margin="6,0,0,0"
+                                    Content="Скачать и установить" Command="{Binding InstallUpdateCommand}"
+                                    Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BoolToVis}}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <ProgressBar Height="4" Margin="0,12,0,0" Minimum="0" Maximum="100"
+                                 Value="{Binding UpdateProgress, Mode=OneWay}" Foreground="{DynamicResource AccentBrush}"
+                                 Background="{DynamicResource SurfaceSunken}" BorderThickness="0"
+                                 Visibility="{Binding IsUpdateBusy, Converter={StaticResource BoolToVis}}" />
+
+                    <StackPanel Margin="0,12,0,0"
+                                Visibility="{Binding HasUpdateNotes, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="Что нового" FontSize="11" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding UpdateNotes}" Style="{StaticResource MutedText}" FontSize="10.5"
+                                   Margin="0,3,0,0" TextWrapping="Wrap" MaxWidth="680" HorizontalAlignment="Left" />
+                    </StackPanel>
+
+                    <Border Style="{StaticResource Divider}" Margin="0,14,0,12" />
+
+                    <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding AutoCheckUpdates, Mode=TwoWay}">
+                        <StackPanel>
+                            <TextBlock Text="Проверять обновления автоматически" FontSize="12.5" />
+                            <TextBlock Text="При запуске и каждые 6 часов. Новая версия скачивается только по вашему подтверждению"
+                                       Style="{StaticResource MutedText}" FontSize="10.5" Margin="0,2,0,0" />
+                        </StackPanel>
+                    </CheckBox>
+
+                    <TextBlock Style="{StaticResource MutedText}" FontSize="10" Margin="0,12,0,0" TextWrapping="Wrap"
+                               Text="Сервер обновлений задаётся в update-endpoints.json рядом с программой. Скачанный файл проверяется по SHA-256, старый exe сохраняется рядом как RDG.Zapret.exe.bak." />
+                </StackPanel>
+            </Border>
+
+            <!-- ===== ABOUT ===== -->
+            <Border Style="{StaticResource Card}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="RDG.Zapret" Style="{StaticResource SectionHeading}" />
+                            <Border Style="{StaticResource Pill}" Margin="8,0,0,0" Padding="8,2">
+                                <TextBlock Text="{Binding VersionText, StringFormat=v{0}}" FontSize="10"
+                                           Foreground="{DynamicResource TextSecondary}" />
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource MutedText}" Margin="0,6,0,0" MaxWidth="620"
+                                   Text="Удобная оболочка для zapret: автоподбор стратегий, проверка доступности сервисов и диагностика. Движок zapret — © bol-van, наборы стратегий — © Flowseal. Приложение не изменяет системные файлы без вашего действия." />
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <Button Style="{StaticResource GhostButton}" Height="30" Content="zapret (bol-van)"
+                                    Command="{Binding OpenOriginalCommand}" />
+                            <Button Style="{StaticResource GhostButton}" Height="30" Margin="4,0,0,0"
+                                    Content="Пресеты (Flowseal)" Command="{Binding OpenFlowsealCommand}" />
+                            <Button Style="{StaticResource GhostButton}" Height="30" Margin="4,0,0,0"
+                                    Content="Данные приложения" Command="{Binding OpenDataFolderCommand}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="20,0,0,0">
+                        <Button Style="{StaticResource DangerButton}" Height="36" Content="Сбросить настройки"
+                                Command="{Binding ResetCommand}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <TextBlock Style="{StaticResource MutedText}" FontSize="10" HorizontalAlignment="Center" Margin="0,14,0,2"
+                       Text="RDG.Zapret не связан с разработчиками zapret. Используйте на свой риск." />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
